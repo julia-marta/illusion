@@ -1,3 +1,4 @@
+// пункты в разделе numbers
 .features-list {
   &__item-feature {
     transition: opacity 0.2s ease;
@@ -37,16 +38,19 @@
   }
 }
 
+// линия у "волшебной палочки" на главной
 .intro__title-line {
   &::before {
     transition: width 0.5s ease;
   }
 }
 
+// главное меню (неясно, зачем тут transition, так как для меню не задано свойство color)
 .main-menu {
   transition: color 0.2s ease;
 }
 
+// открытое меню (неясно зачем transition для прозрачности, так как она не задана + плавность скрытия подложки меню ::before)
 .main-menu--opened {
   transition: opacity 0.15s ease;
 
@@ -55,6 +59,8 @@
   }
 }
 
+// что такое slogan__word - непонятно, в разметке html такого класса пока нет
+// main-menu__link-icon при классе opened-out никак не реагирует на transition прозрачности
 .main-menu--opened-out {
   .main-menu__link-text {
     .slogan__word span {
@@ -67,6 +73,7 @@
   }
 }
 
+// плавность появления подложки меню ::before и иконок на открытом меню
 .main-menu--opened.main-menu--active {
   &::before {
     transition: transform 0.35s ease;
@@ -77,10 +84,12 @@
   }
 }
 
+// неясно зачем transition для цвета ссылок, так как цвет задается классу main-menu__link-text
 .main-menu__link {
   transition: color 0.3s ease;
 }
 
+// плавная смена точек на иконки в главном меню при наведении путем изменения прозрачности
 .main-menu__link {
   &::before {
     transition: opacity 0.2s ease;
@@ -91,14 +100,17 @@
   }
 }
 
+// плавное появление подписей пунктов меню в закрытом состоянии
 .main-menu__link-text {
   transition: opacity 0.2s ease;
 }
 
+// плавное появление и исчезание лого вверху при переключении с главной на другие страницы (только планшет и мобила)
 .main-menu__logo {
   transition: opacity 0.3s ease;
 }
 
+// плавное появление и исчезание социальных иконок в выпадающем меню (только планшет и мобила)
 .main-menu__social {
   @media (max-width: $tablet) and (orientation: portrait) {
     transition: opacity 0.2s ease;
@@ -109,6 +121,7 @@
   }
 }
 
+// плавная трансформация тогглера, открывающего меню, при наведении
 .main-menu__toggler-line {
   &,
   &::before,
@@ -117,9 +130,16 @@
   }
 }
 
+// неясно зачем отдельно задавать transition для path, ведь выше уже задали плавность прозрачности для иконок
 .main-menu.main-menu--opened .main-menu__link path {
   transition: none;
 }
+
+// плавное появление ссылки амато джакомо в разделе show и некий эффект "мерцания"
+// механизм такой
+// страница загружается - у неё класс active, начинает появляться ссылка с задержкой 0.25s
+// потом класс active на секунду исчезает, начинает пропадать прозрачность (плавно и без задержки)
+// класс active снова добавляется и с задержкой опять появляется ссылка
 
 .show__link {
   transition: opacity 0.3s ease;
@@ -127,12 +147,19 @@
   .screen--show.active & {
     transition-delay: 0.25s;
 
+// плавное появление линии ::before, механизм такой:
+// - когда экран неактивен, линия исчезает совсем с помощью трансформации scale(0)
+// потом добавляется класс active и происходит трансформация обратно (до единицы)
+// с помощью  transform-origin: 0 0 задаем направление что трансформация начинается слева (это все равно что top left)
+// если задать transform-origin: top right, появление будет справа налево
+
     span::before {
       transition: transform 0.3s cubic-bezier(0.34, 0, 0.2, 1) 0.45s;
     }
   }
 }
 
+// плавное появление даты в разделе show и некий эффект "мерцания" (механизм описан выше у show__link)
 .show__date {
   transition: opacity 0.3s ease;
 
@@ -141,12 +168,14 @@
   }
 }
 
+// плавное появление подписей под иконками map__place в разделе map
 .map__place {
   span {
     transition: opacity 0.3s ease;
   }
 }
 
+// плавное вращение "звёздочек" с инфо на карте и плавное появление подписей под ними
 .map__info {
   svg {
     transition: transform 0.3s ease;
@@ -161,6 +190,7 @@
   }
 }
 
+// плавное расширение круглых иконок с событиями и появление подписей под ними
 .map__event {
   transition: all 0.3s ease;
 
@@ -173,27 +203,34 @@
   }
 }
 
+// модалка открывается по нажатию на любую иконку map__event
+// плавное появление фона из прозрачного
 .modal {
   transition: opacity 0.2s ease;
 }
 
+// плавный "выезд" окна справа и контента в нём
 .modal__window,
 .modal__content {
   transition: transform 0.55s cubic-bezier(0.37, 0, 0.13, 1);
 }
 
+// задержка "выезда" контента модалки, чтобы он выдвигался справа чуть позже, чем само окно
 .modal__content {
   transition-duration: 0.6s;
 }
 
+// задержка "выезда" строк с описанием мероприятий, чтобы они появлялись еще чуть позже чем контент и окно
 .modal__block-event {
   transition: transform 0.85s cubic-bezier(0.17, 0, 0.13, 1);
 }
 
+// плавная смена цвета текста в хедере при переключении между экранами с разными фонами
 .page-header {
   transition: color 0.3s ease;
 }
 
+// плавная смена цвета текста с датами в хедере + прозрачности на планшете и мобиле
 .page-header__period {
   transition: color 0.3s ease;
 
@@ -206,33 +243,42 @@
   }
 }
 
+// плавная смена цвета иконки корзины в хедере
 .page-header__cart .btn {
   transition: color 0.3s ease;
 }
 
+// плавное исчезание лого на главном экране #top
 .page-header__logo {
   transition: opacity 0.5s ease;
 }
 
+// плавное появление количества в корзине, пока этого класса нет в разметке
 .page-header__cart {
   &-number {
     transition: opacity 0.3s ease;
   }
 
+  // плавное исчезание иконки "глаза" в корзине, когда она меняется на количество, пока нет в разметке
   .eye_apple,
   .upper_eyelid {
     transition: opacity 0.01s ease 0.3s;
   }
 }
 
+// плавная смена экранов
 .screen {
   transition: opacity 0.7s ease;
 }
 
+// пока в разметке нет
 .screen__scroller {
   transition: all 0.3s ease;
 }
 
+// плавное скрытие "снежинок" при перелистывании экрана
+// бесполезная анимация, так как скрытие происходит за счет смены прозрачности screen--hidden,
+// а у него своё свойство transition
 .screen--hidden,
 .screen--deactivated {
   .whiff {
@@ -240,6 +286,7 @@
   }
 }
 
+// плавная смена цвета, выезд и появление стрелочек в слайдере #mc и в листалке дней в #tickets
 .tickets-block__control,
 .slider__control {
   transition: color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
@@ -253,22 +300,26 @@
   }
 }
 
+// плавность стрелочек в слайдере на активном экране
 .screen--mc.active .slider__control {
   transition: color 0.2s ease, transform 0.5s ease 0.55s,
     opacity 0.5s ease 0.55s;
 }
 
+// плавность стрелочек в листалке билетов на активном экране
 .screen--tickets.active .tickets-block--form-opened .tickets-block__control {
   transition: color 0.2s ease, transform 0.5s ease 0.15s,
     opacity 0.5s ease 0.15s;
 }
 
+// плавность появления формы покупки билета при выборе даты и переходе в форму
 .tickets-block--form-opened {
   .tickets-block__form {
     transition: opacity 0.8s ease;
   }
 }
 
+// плавность появления и выезда пагинации в слайдере #mc на активном экране
 .slider__pagination {
   transition: opacity 0.3s ease, transform 0s ease 0.3s;
 
@@ -277,12 +328,14 @@
   }
 }
 
+// slogan__word на слайде пока в разметке нет
 .swiper-slide {
   .slogan__word span {
     transition: none;
   }
 }
 
+// временные функции для слайдера, но пока неясно на что они влияют
 .swiper-wrapper {
   transition-timing-function: cubic-bezier(0.37, 0, 0.13, 1);
 
@@ -291,23 +344,27 @@
     transition-timing-function: cubic-bezier(1, 0, 1, 0.62);
   }
 
+  // плавное появление слайдов при перелистывании слайдеры
   &.active {
     .swiper-slide {
       transition: opacity 0.15s ease;
     }
 
+    // прозрачность для неактивных слайдов, чтобы реализовать плавное появление выше
     .swiper-slide:not(.swiper-slide-active) {
       opacity: 0;
     }
   }
 }
 
+// slogan__word на слайде пока в разметке нет - повтор, такое свойство уже было выше
 .swiper-slide {
   .slogan__word span {
     transition: none;
   }
 }
 
+// стрелочка на главной экрана #tickets которая переходит в форму первого доступного дня, плавность движения (прозрачность в свойствах ей не задана, так что неясно зачем переход для нее)
 .tickets-block__button {
   &--next {
     transition: opacity 0.3s ease, transform 0.55s ease;
@@ -318,12 +375,15 @@
   }
 }
 
+// кнопки добавления и удаления билетов, плавность трансформации при наведении и обратно
 .tickets-form__counter {
   &::before {
     transition: transform 0.2s ease;
   }
 }
 
+// кнопки "купить билет" на модалке, которая открывается по нажатию на любую иконку map__event на карте
+// плавное расширение границ и смена цвета при наведении и обратно
 .btn {
   &::before,
   &::after {
@@ -332,14 +392,17 @@
   }
 }
 
+// кнопки соцсетей в хедере, плавная смена цвета при переходе между экранами и анховере
 .social-btn {
   transition: color 0.55s ease;
 }
 
+// кнопки соцсетей плавная смена цвета при наведении
 .social-btn:hover {
-  transition-duration: 0.3s;
+  transition-duration: 3.3s;
 }
 
+// кнопки соцсетей плавное расширение границ при нажатии
 .social-btn {
   &::after {
     transition-duration: 0.4s;
@@ -348,6 +411,7 @@
   }
 }
 
+// "снежинки" (например, на слайдере в разделе #mc) - плавное появление при переключении экранов
 .whiff {
   transition: opacity 0.5s ease;
 }
