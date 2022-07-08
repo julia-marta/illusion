@@ -1,15 +1,16 @@
 import * as scrollSpy from 'simple-scrollspy/dist/simple-scrollspy.min';
+import AccentTypographyBuild from './accent-typography-builder';
 
 import Swiper from 'swiper';
 
 
 class Menu {
   constructor() {
-    this.header      = document.querySelector(`.js-header`);
-    this.menu        = document.querySelector(`.js-menu`);
+    this.header = document.querySelector(`.js-header`);
+    this.menu = document.querySelector(`.js-menu`);
     this.menuToggler = document.querySelector(`.js-menu-toggler`);
     this.menuOverlay = document.querySelector(`.js-overlay`);
-    this.menuLinks   = [...document.querySelectorAll(`.js-menu-link`)];
+    this.menuLinks = [...document.querySelectorAll(`.js-menu-link`)];
 
     this.vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty(`--vh`, `${this.vh}px`);
@@ -19,6 +20,26 @@ class Menu {
       menuActiveTarget: `.js-menu-link`,
       offset: 100
     });
+
+    // SPLIT TEXT
+    // подготовка текста ссылок меню для побуквенной анимации
+    const prepareLinksText = (root, selector) => {
+      // в корневом элементе ищем по селектору все дочерние, спрэдим в массив и перебираем
+      return [...root.querySelectorAll(selector)].map((el) => {
+        // создаём экземпляр класса, разбивающего текст, передаём в него:
+        // - элемент
+        // - продолжительность анимации (300)
+        // - класс активации (null, он тут не нужен, анимация уже прописана в main-menu.scss для slogan__word)
+        // - свойство анимации (transform)
+        const accentObject = new AccentTypographyBuild(el, 300, null, `transform`);
+        // очищаем стили (при создании класса они передаются в тч чтобы потом их динамично добавлять через метод addStyle)
+        accentObject.clearStyle();
+        // возвращаем класс
+        return accentObject;
+      });
+    };
+    // получаем массив из классов для каждой ссылки меню, разбитой на буквы
+    this.accentLinkTextObjects = prepareLinksText(this.menu, `.main-menu__link-text`);
 
     this.initEventListeners();
   }
@@ -37,6 +58,10 @@ class Menu {
           this.menu.classList.remove(`main-menu--active`);
           this.menu.classList.remove(`main-menu--opened-in`);
           this.menu.classList.add(`main-menu--opened-out`);
+          // когда меню закрывается, очищаем стили анимации для ссылок
+          this.accentLinkTextObjects.forEach((accentObject) => {
+            accentObject.clearStyle();
+          });
           setTimeout(() => {
             this.menu.classList.remove(`main-menu--opened`);
             this.menu.classList.remove(`main-menu--opened-out`);
@@ -48,6 +73,10 @@ class Menu {
           this.header.classList.add(`page-header--menu-opened`);
 
           setTimeout(() => {
+            // когда меню открывается, добавляем стили анимации
+            this.accentLinkTextObjects.forEach((accentObject) => {
+              accentObject.addStyle();
+            });
             this.menu.classList.add(`main-menu--active`);
           }, 100);
         }
@@ -60,7 +89,7 @@ class Menu {
         }
       });
 
-      this.menuOverlay.addEventListener(`click`, function () {
+      this.menuOverlay.addEventListener(`click`, () => {
         this.menu.classList.remove(`main-menu--opened`);
         this.header.classList.remove(`page-header--menu-opened`);
       });
@@ -76,7 +105,6 @@ class Menu {
     }
   }
 }
-
 
 
 class Slider {
@@ -108,7 +136,6 @@ class Slider {
     });
   }
 }
-
 
 
 class ModalTriggers {
@@ -183,7 +210,6 @@ class ModalTriggers {
     }
   }
 }
-
 
 
 class TicketsSlider {

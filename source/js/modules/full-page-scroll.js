@@ -17,7 +17,7 @@ export default class FullPageScroll {
 
     this.headerColorSwitcher = new PageSwitchHandler(app);
 
-    document.addEventListener(`wheel`, this.onScrollHandler, { passive: false, useCapture: true });
+    document.addEventListener(`wheel`, this.onScrollHandler, {passive: false, useCapture: true});
     window.addEventListener(`popstate`, this.onUrlHashChangedHandler);
     document.body.addEventListener(`slideChanged`, (evt) => {
       this.emitChangeDisplayEvent(evt.detail.slideId);
@@ -25,8 +25,8 @@ export default class FullPageScroll {
 
     const main = document.querySelector(`.page-content`);
 
-    main.addEventListener('touchstart', this.onSwipeStart.bind(this));
-    main.addEventListener('touchend',   this.onSwipeEnd.bind(this));
+    main.addEventListener(`touchstart`, this.onSwipeStart.bind(this));
+    main.addEventListener(`touchend`, this.onSwipeEnd.bind(this));
 
     this.menuElements.forEach((element, index) => {
       element.addEventListener(`click`, (e) => {
@@ -87,18 +87,26 @@ export default class FullPageScroll {
     };
     let prevEvent = null;
 
-    if (this.wheelEvents.length > 0) prevEvent = this.wheelEvents[this.wheelEvents.length - 1];
+    if (this.wheelEvents.length > 0) {
+      prevEvent = this.wheelEvents[this.wheelEvents.length - 1];
+    }
 
     this.wheelEvents.push(eventDetails);
-    if (this.wheelEvents.length > 2) this.wheelEvents.shift();
+    if (this.wheelEvents.length > 2) {
+      this.wheelEvents.shift();
+    }
 
     if (prevEvent) {
       if (prevEvent.direction === eventDetails.direction
         && prevEvent.value >= eventDetails.value
-        && eventDetails.timestamp < prevEvent.timestamp + 150) return;
+        && eventDetails.timestamp < prevEvent.timestamp + 150) {
+        return;
+      }
     }
 
-    if (!this.scrollFlag) return;
+    if (!this.scrollFlag) {
+      return;
+    }
 
     this.scrollFlag = false;
     const currentScreen = this.activeScreen;
@@ -130,7 +138,9 @@ export default class FullPageScroll {
   changePageDisplay() {
     this.changeVisibilityDisplay();
     this.changeActiveMenuItem();
+    // тут при перелистывании экранов вызывается метод setColorScheme, добавлющий классы и запускающий анимации для активного экрана
     this.headerColorSwitcher.setColorScheme(this.screenElements[this.activeScreen].id);
+    // эмитим событие смены экрана
     this.emitChangeDisplayEvent();
     this.clearDeactivatedClass();
 
@@ -163,7 +173,7 @@ export default class FullPageScroll {
 
   changeActiveMenuItem() {
     const activeItem = Array.from(this.menuElements).find((item) => {
-      return item.dataset.href === this.screenElements[this.activeScreen].id
+      return item.dataset.href === this.screenElements[this.activeScreen].id;
     });
 
     if (activeItem) {
@@ -172,7 +182,7 @@ export default class FullPageScroll {
     }
   }
 
-
+  // тут добавляем кастомный ивент "смена экранов", в detail передаём разные опции, диспатчим событие на body
   emitChangeDisplayEvent(slideId = -1) {
     const event = new CustomEvent(`screenChanged`, {
       detail: {
