@@ -1,6 +1,20 @@
+// задаем пунктир и смещение пунктира снежинке (наследуется всеми лучами path)
+.whiff {
+  stroke-dasharray: 33% 20% 33% 34%;
+  stroke-dashoffset: -33%;
+}
+
+// на скрытых экранах снежинки скрыты
 .screen--hidden,
 .screen--deactivated {
   .whiff {
     opacity: 0;
+  }
+}
+
+// смещение на деактивированном экране (пока непонятно, когда такой экран возникает)
+.screen--deactivated {
+  .whiff {
+    stroke-dashoffset: 50%;
   }
 }

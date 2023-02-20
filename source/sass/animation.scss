@@ -9,26 +9,47 @@
   }
 
   &.active {
+    // анимация появления снежинок с эффектом фейерверка (аналогична слайдеру в разделе мастер-классы)
+    .whiff {
+      animation-name: show-whiff;
+      animation-duration: 1.5s;
+      animation-iteration-count: 1;
+      animation-timing-function: cubic-bezier(0, 0, 0, 1);
+      animation-fill-mode: forwards;
+    }
+    // задержкт появления разных элементов каждого пункта списка
     .features-list__item {
       &:nth-child(2) {
+        .whiff {
+          animation-delay: 0.1s;
+        }
         .features-list__item-feature,
         .features-list__item-value {
           transition-delay: 0.2s;
         }
       }
       &:nth-child(3) {
+        .whiff {
+          animation-delay: 0.2s;
+        }
         .features-list__item-feature,
         .features-list__item-value {
           transition-delay: 0.3s;
         }
       }
       &:nth-child(4) {
+        .whiff {
+          animation-delay: 0.35s;
+        }
         .features-list__item-feature,
         .features-list__item-value {
           transition-delay: 0.4s;
         }
       }
       &:nth-child(5) {
+        .whiff {
+          animation-delay: 0.5s;
+        }
         .features-list__item-feature,
         .features-list__item-value {
           transition-delay: 0.55s;
@@ -42,6 +63,16 @@
 .intro__title-line {
   &::before {
     transition: width 0.5s ease;
+  }
+
+  // фоновая анимация мерцания снежинки на конце "волшебной палочки"
+  &.active .whiff {
+    animation-name: show-whiff-infinite;
+    animation-duration: 5s;
+    animation-iteration-count: infinite;
+    animation-delay: 0.7s;
+    animation-timing-function: cubic-bezier(0, 0, 0, 1);
+    animation-fill-mode: forwards;
   }
 }
 
@@ -129,7 +160,14 @@
   }
 }
 
-// неясно зачем отдельно задавать transition для path, ведь выше уже задали плавность прозрачности для иконок
+// плавное рисование контура иконок в меню
+.main-menu__link path {
+  transition: stroke 0.8s ease, fill 0.8s ease, stroke-dashoffset 0.8s ease;
+}
+
+// БЫЛО неясно зачем отдельно задавать transition для path, ведь выше уже задали плавность прозрачности для иконок
+// теперь ясно: потому что мы рисуем иконки с помощью изменения stroke-dashoffset с длины контура (контур не видно) до нуля (контур видно)
+// stroke-dashoffset является атрибутом path, поэтому через него задаем плавное изменение: цвета контура, цвета заливки и рисования контура
 .main-menu.main-menu--opened .main-menu__link path {
   transition: none;
 }
@@ -258,11 +296,20 @@
     transition: opacity 0.3s ease;
   }
 
-  // плавное исчезание иконки "глаза" в корзине, когда она меняется на количество, пока нет в разметке
+  // плавное исчезание иконки "глаза" в корзине, когда она меняется на количество билетов
   .eye_apple,
   .upper_eyelid {
     transition: opacity 0.01s ease 0.3s;
   }
+}
+
+// мерцание "снежинки" в корзине, когда обновляется количество билетов
+.page-header__cart.updated .whiff {
+  animation-name: show-and-hide-whiff;
+  animation-duration: 1.5s;
+  animation-iteration-count: 1;
+  animation-timing-function: cubic-bezier(0.26, 0, 0.4, 1);
+  animation-fill-mode: forwards;
 }
 
 // тот же трюк с двумя обёртками и анимациями движения для разных осей, что в иконке с билетами
@@ -468,7 +515,6 @@
     }
 
     // анимация для снежинок на активных слайдах
-    // !!! пока такой анимации в проекте нет
     .swiper-slide-active {
       .whiff {
         opacity: 1;
