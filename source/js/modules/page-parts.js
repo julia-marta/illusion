@@ -304,10 +304,101 @@ class TicketsSlider {
   }
 }
 
+class Scrollers {
+  constructor() {
+    this.map = document.getElementById(`map`);
+    // js-map-scroller - стрелки для навигации по карте
+    this.scrollers = document.querySelectorAll(`.js-map-scroller`);
+
+    this.reverseNames = {
+      touchstart: `touchend`,
+      mousedown: `mouseup`
+    };
+    // дельты скролла: разница между видимой областью и областью с учетом прокрутки
+    const scrollDeltaX = this.map.scrollWidth - this.map.clientWidth;
+    // устанавливаем карте ширину прокрученной части в ремах
+    this.map.scrollLeft = scrollDeltaX / 10;
+    const scrollDeltaY = this.map.scrollHeight - this.map.clientHeight;
+    // если есть прокрутка по вертикали, делаем стрелки вверх/вниз видимыми
+    if (scrollDeltaY > 0) {
+      document.querySelector(`.screen__scroller--up`).classList.remove(`screen__scroller--hidden`);
+      document.querySelector(`.screen__scroller--down`).classList.remove(`screen__scroller--hidden`);
+      // устанавливаем карте высоту прокрученной части в ремах
+      this.map.scrollTop = scrollDeltaY / 10;
+    }
+    // устанавливаем обработчики
+    this.initEventListeners();
+  }
+
+  initEventListeners() {
+    // перебираем скроллеры (стрелки навигации)
+    for (let i = 0; i < this.scrollers.length; i++) {
+      // добавляем в массив события начала тача/касания мышкой
+      `touchstart,mousedown`.split(`,`).forEach((name) => {
+        // каждому скроллеру навешиваем обработчик для каждого из этих событий
+        this.scrollers[i].addEventListener(name, (evt) => {
+          // текущее время в миллисекундах 1970 (аналог new Date().getTime(), полученный с помощью унарного плюса)
+          let time = +new Date();
+          // устанавливаем флаг "мышь нажата"
+          let mouseDowned = true;
+          let upFn;
+          // на окно навешиваем обработчик противоположных событий конца тача/отпускания мыши
+          window.addEventListener(this.reverseNames[name], upFn = () => {
+            // внутри удаляем этот обработчик и выключаем флаг "мышь нажата"
+            window.removeEventListener(this.reverseNames[name], upFn);
+            mouseDowned = false;
+          });
+          // получаем направление скроллера из его дата атрибута
+          const direction = evt.currentTarget.getAttribute(`data-direction`);
+          // функция покадровой анимации скролла
+          const ticker = () => {
+            // текущее время в миллисекундах
+            const currentTime = +new Date();
+            // дельта времени с момента старта нажатия на скроллер, в секундах
+            let dt = (currentTime - time) / 1000;
+            // обновляем время старта
+            time = currentTime;
+            // дельта не должна быть более 0.5
+            if (dt > 0.5) {
+              dt = 0.5;
+            }
+            // в зависимости от направления скроллера к значения уже прокрученных частей по вертикали или горизонтали прибавляем или вычитаем дельту, умноженную на 300 (шаг скролла)
+            // получаем новое положение прокрученной карты
+            switch (direction) {
+              case `up`: {
+                this.map.scrollTop -= dt * 300;
+                break;
+              }
+              case `down`: {
+                this.map.scrollTop += dt * 300;
+                break;
+              }
+              case `left`: {
+                this.map.scrollLeft -= dt * 300;
+                break;
+              }
+              case `right`: {
+                this.map.scrollLeft += dt * 300;
+                break;
+              }
+            }
+            // запускаем анимацию непрерывно, пока мышь нажата
+            if (mouseDowned) {
+              requestAnimationFrame(ticker);
+            }
+          };
+          // первый запуск анимации
+          ticker();
+        });
+      });
+    }
+  }
+}
 
 export {
   Menu,
   Slider,
   ModalTriggers,
   TicketsSlider,
+  Scrollers
 };

@@ -1,3 +1,46 @@
+// анимация появления снежинок на слайдах (изменение смещения каждого луча даёт что-то вроде эффекта фейерверка)
+@keyframes show-whiff {
+  from {
+    stroke-dashoffset: -33%;
+  }
+
+  to {
+    stroke-dashoffset: 53%;
+  }
+}
+
+// фоновая (бесконечная) анимация мерцания снежинки у волшебной палочки на главной
+@keyframes show-whiff-infinite {
+  0%,
+  0.1% {
+    stroke-dashoffset: -33%;
+  }
+
+  28% {
+    stroke-dashoffset: 53%;
+  }
+
+  90% {
+    stroke-dashoffset: 53%;
+    animation-timing-function: cubic-bezier(1, 0, 1, 1);
+  }
+
+  100% {
+    stroke-dashoffset: 87%;
+  }
+}
+
+// анимация мигания снежинки в корзине при  обновлении количества билетов
+@keyframes show-and-hide-whiff {
+  from {
+    stroke-dashoffset: -33%;
+  }
+
+  to {
+    stroke-dashoffset: 87%;
+  }
+}
+
 // анимация появления пунктов списка на слайдах (вылет + прозрачность)
 @keyframes slider__show-paragraph {
   0% {
