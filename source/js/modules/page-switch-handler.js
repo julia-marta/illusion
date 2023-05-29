@@ -1,4 +1,5 @@
 import AccentTypographyBuild from './accent-typography-builder';
+import AnimatedNumbers from './animated-numbers';
 
 export default class PageSwitchHandler {
   constructor(app) {
@@ -27,6 +28,14 @@ export default class PageSwitchHandler {
     // заголовок купить билет в секции tickets
     // передаём элемент tickets-block__title, продолжительность 500, активный класс accent-typography--active, свойство transform
     const ticketsBlockTitle = new AccentTypographyBuild(`.tickets-block__title`, 500, `accent-typography--active`, `transform`);
+
+    // создаём анимацию чисел
+    const numbers = new AnimatedNumbers({
+      elements: `#js-features-list .features-list__item-value`,
+      duration: 800,
+      durationAttenuation: 150,
+      delay: 200
+    });
 
     this.colorScheme = {
       tickets: {
@@ -57,7 +66,13 @@ export default class PageSwitchHandler {
         animationTopScreenTextLine2.runAnimation.bind(animationTopScreenTextLine2),
         animationTopScreenTextLine3.runAnimation.bind(animationTopScreenTextLine3),
       ],
+      // биндим анимацию чисел
+      numbers: [
+        numbers.animate.bind(numbers)
+      ],
       show: [
+        // биндим анимацию постера и передаем в скрипт app
+        app.poster.startAnimation.bind(app.poster, app),
         showTitle.runAnimation.bind(showTitle),
         () => {
           // анимацию блоков текста запускаем спустя 200мс после заголовков
