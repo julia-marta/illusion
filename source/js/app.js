@@ -1,5 +1,4 @@
 import "picturefill/dist/picturefill.min";
-import AnimatedCart from "./modules/animated-cart";
 
 import {
   Menu,
@@ -9,6 +8,9 @@ import {
   Scrollers,
 } from "./modules/page-parts";
 import FullPageScroll from "./modules/full-page-scroll";
+import AnimatedCart from "./modules/animated-cart";
+import Poster from "./modules/poster-canvas-animation";
+import WhaleScene from "./modules/whale-canvas-animation";
 
 class App {
   constructor() {
@@ -18,7 +20,20 @@ class App {
     this.ticketsSlider = new TicketsSlider();
     this.scrollers = new Scrollers();
 
+    // записываем в свойство app постер, потом из него будем вызывать метод startAnimation
+    this.poster = new Poster({
+      canvas: `#poster-canvas`,
+      bgCanvas: `#poster-bg-canvas`,
+    });
+    // отрисовываем фон постера
+    this.poster.drawBg();
+
     this.fullPageScroll = new FullPageScroll(this);
+
+    // // записываем в свойство app сцену с китом, потом из него будем вызывать метод startAnimation
+    this.whaleScene = new WhaleScene({
+      canvas: `#whale-canvas`,
+    });
 
     this.cart = new AnimatedCart({
       cart: `.page-header__cart`,
@@ -27,6 +42,23 @@ class App {
       ticket: `.tickets-form__ticket`,
       form: `.tickets-block__form`,
       number: `.page-header__cart-number`,
+    });
+
+    // добавляем обработчики
+    this.initEventListeners();
+  }
+
+  // метод добавления обработчика на ресайз окна
+  // в обработчике вызываем методы обновления размеров для адаптивности анимаций
+  // заново отрисовываем анимации
+  initEventListeners() {
+    window.addEventListener(`resize`, () => {
+      this.poster.updateSize();
+      this.whaleScene.updateSceneSizing();
+
+      this.poster.drawBg();
+      this.poster.draw();
+      this.whaleScene.drawScene();
     });
   }
 }
