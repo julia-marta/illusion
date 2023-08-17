@@ -11,6 +11,7 @@ import FullPageScroll from "./modules/full-page-scroll";
 import AnimatedCart from "./modules/animated-cart";
 import Poster from "./modules/poster-canvas-animation";
 import WhaleScene from "./modules/whale-canvas-animation";
+import ThreeBackground from './modules/3d';
 
 class App {
   constructor() {
@@ -29,6 +30,11 @@ class App {
     this.poster.drawBg();
 
     this.fullPageScroll = new FullPageScroll(this);
+
+    // создаем фон Three
+    this.view3d = new ThreeBackground();
+    // инициализируем сцену
+    this.view3d.start();
 
     // // записываем в свойство app сцену с китом, потом из него будем вызывать метод startAnimation
     this.whaleScene = new WhaleScene({
