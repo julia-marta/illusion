@@ -33,8 +33,10 @@ class App {
 
     // создаем фон Three
     this.view3d = new ThreeBackground();
-    // инициализируем сцену
-    this.view3d.start();
+    // инициализируем сцену после загрузки всех локальных сцен
+    this.view3d.load().then(() => {
+      this.view3d.start();
+    });
 
     // // записываем в свойство app сцену с китом, потом из него будем вызывать метод startAnimation
     this.whaleScene = new WhaleScene({
