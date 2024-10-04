@@ -1001,8 +1001,8 @@ $map-birds-options: (
 
       @media (min-width: $stop-scaling) {
         transform: none;
-        margin-top: -5px * #{$index};
-        margin-left: -5px * #{$index};
+        margin-top: calc(5px * #{$index});
+        margin-left: calc(5px * #{$index});
         width: calc(55px * #{$index});
         height: calc(55px * #{$index});
       }
@@ -1030,8 +1030,8 @@ $map-birds-options: (
 
       @media (min-width: $stop-scaling) {
         transform: none;
-        margin-top: -5px * #{$index};
-        margin-left: -5px * #{$index};
+        margin-top: calc(-5px * #{$index});
+        margin-left: calc(-5px * #{$index});
         width: calc(55px * #{$index});
         height: calc(55px * #{$index});
       }
@@ -1212,4 +1212,3 @@ $map-birds-options: (
     }
   }
 }
-
