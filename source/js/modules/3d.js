@@ -1,6 +1,5 @@
 import {WEBGL} from "three/examples/jsm/WebGL";
-import PlaneScene from "./3d/webgl-plane-view";
-// import Stages3DView from './3d/stages-3d-view';
+import Stages3DView from './3d/stages-3d-view';
 
 // Карты соответствия идентификаторов разделов сайта и состояний сцен 3d-фона
 const object3dSchema = {
@@ -43,7 +42,7 @@ const appendRendererToDOMElement = (object, targetNode) => {
   targetNode.appendChild(object.renderer.domElement);
 };
 
-// класс создания фона с Three
+// класс создания фона с Three js сценами
 class ThreeBackground {
   constructor() {
     // Флаг, определяющий версию сцен:
