@@ -20,6 +20,7 @@ class Tween {
     this.hasOnComplete = typeof onComplete === `function`;
     this.onComplete = this.hasOnComplete ? onComplete : null;
   }
+  // смена параметров анимации
   invalidate(dt, t) {
     if (Number.isNaN(t) || typeof t === `undefined`) {
       return;
