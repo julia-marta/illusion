@@ -48,6 +48,17 @@ const createLightSources = () => {
   };
 };
 
+// добавление Rig-конструкции камеры на сцену, а самой камеры внутрь нулевой группы рига
+const addCameraRigToViewObject = (viewObject, rig) => {
+  const {camera, scene} = viewObject;
+  // Сбрасываем координаты камеры, чтобы положение камеры полностью определялось ригом
+  camera.position.set(0, 0, 0);
+  scene.add(rig.root);
+  rig.cameraNull.add(camera);
+  viewObject.cameraRig = rig;
+  return rig;
+};
+
 // класс создания 3D сцены, наследует от абстрактного класса создания сцены
 class Stages3DView extends AbstractView {
   // установка параметров (метод родительского класса)
@@ -108,9 +119,12 @@ class Stages3DView extends AbstractView {
     // делаем ресайз
     this.resize();
   }
-  // установка какого-то конфига (?), пока нигде не используется
+  // добавление дополнения внутрь класса создания 3D сцены
+  // в данном случае используется для добавления дополнения к Rig-конструкции камеры
   installAddOn(config) {
     this.addOn = config;
+    // здесь же добавляем риг на сцену с помощью определённой выше функции
+    if (config.rig) addCameraRigToViewObject(this, config.rig);
   }
   // загрузка модуля (вызывается в аналогичном методе ThreeBackground, чтобы его зарезолвить)
   async load() {

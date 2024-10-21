@@ -1,5 +1,8 @@
 import {WEBGL} from "three/examples/jsm/WebGL";
+import WebglEffectRenderController from './3d/webgl-effect-render-controller';
 import Stages3DView from './3d/stages-3d-view';
+import GradientBgStage from './3d/gradient-bg-stage';
+import CameraRigAddon, {set3dStagesPosition} from './3d/camera-rig-addon';
 
 // Карты соответствия идентификаторов разделов сайта и состояний сцен 3d-фона
 const object3dSchema = {
@@ -11,6 +14,17 @@ const object3dSchema = {
   'map': `stage6`,
   'tickets': `stage6`
 };
+// Карты соответствия идентификаторов разделов сайта и применения эффектов
+const effectStateSchema = {
+  'top': `default`,
+  'about': `default`,
+  'numbers': `default`,
+  'show': `default`,
+  'mc': `off`,
+  'map': `off`,
+  'tickets': `off`
+};
+
 // главное хранилище состояний (активный экран и номер слайда)
 const globalStateStorage = {
   screenName: 'top',
@@ -55,12 +69,35 @@ class ThreeBackground {
     const view3d = new Stages3DView({isLightMode});
 
     if (WEBGL.isWebGLAvailable()) {
-      // Временно размещаем сцены в пространстве, одну над другой.
-      // Мы рассчитаем их конечное расположение при настройке траекторий полета камеры.
-      view3d.stage1.position.y = 0;
-      view3d.stage2.position.y = 2000;
-      view3d.stage3.position.y = 4000;
-      view3d.stage5.position.y = 8000;
+      // размещаем сцены в пространстве с помощью функции, определённой в Rig Addon
+      // установка позиций и углов вращения сцен
+      set3dStagesPosition(view3d);
+      // добавляем внутрь класса создания 3D сцены дополнение к Rig-конструкции камеры с помощью встроенного метода
+      view3d.installAddOn(new CameraRigAddon());
+
+      // Для Desktop добавляем эффект шума
+      if (!isLightMode) {
+        // создаём контроллер применения к сцене эффекта шума
+        const composerController = new WebglEffectRenderController(view3d.renderer, view3d.scene, view3d.camera);
+        // устанавливаем для сцены кастомный рендер (метод из абстрактного родительского класса)
+        view3d.setRenderFunction(() => {
+            composerController.render();
+        });
+        // сохраняем контроллер
+        this.composerController = composerController;
+        // на мобильной версии добавляем фон с градиентом вместо шума
+            }
+            else {
+              const bgView = new GradientBgStage();
+              this.bgView = bgView;
+              view3d.setRenderFunction(() => {
+                view3d.renderer.render(bgView.scene, bgView.camera);
+                view3d.renderer.autoClear = false;
+                view3d.renderer.render(view3d.scene, view3d.camera);
+                view3d.renderer.autoClear = true;
+              });
+            }
+
       // вызываем функцию рендера в ДОМ, в ней автоматом создастся канвас
       appendRendererToDOMElement(
           view3d,
@@ -91,7 +128,7 @@ class ThreeBackground {
   }
  // добавление слушателя на событие смены экрана, в котором меняем активный экран и позицию камеры
   addListeners() {
-    const {view3d} = this;
+    const {view3d, composerController} = this;
     // Устанавливаем текущее состояние, соответствующее разделу
     view3d.setState(object3dSchema[globalStateStorage.screenName], globalStateStorage.slideId);
     // Добавляем слушателя кастомного события screenChanged
@@ -100,20 +137,13 @@ class ThreeBackground {
       updateGlobalState(evt);
       // Устанавливаем текущее состояние, соответствующее разделу
       view3d.setState(object3dSchema[globalStateStorage.screenName], globalStateStorage.slideId);
-      // Временно задаем координаты камеры для каждого экрана, чтобы была возможность проверять расположение объектов в каждой группе
-      const cameraPositionsY = {
-        top: 1,
-        about: 2000,
-        numbers: 4000,
-        show: 6000,
-        mc: 8000,
-      };
-      // устанавливаем положение камеры, соответствующее экрану
-      const position = cameraPositionsY[evt.detail.screenName];
-      if (position) {
-        view3d.camera.position.y = position;
-      }
     });
+      // Устанавливаем текущее состояние
+      composerController.setState(effectStateSchema[globalStateStorage.screenName]);
+      // Добавляем слушателя
+      document.body.addEventListener(`screenChanged`, (evt) => {
+        composerController.setState(effectStateSchema[evt.detail.screenName], -1);
+      });
   }
 }
 
